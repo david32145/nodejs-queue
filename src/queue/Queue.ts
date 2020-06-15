@@ -1,27 +1,31 @@
 import RedisPublish from "../pubsub/Publish"
-import RedisSubscribe from "../pubsub/Subscribe"
 
 type QueueFunction<T> = (data: T) => void
 
-class Queue<T> {
-  private name: string
-  private cb: QueueFunction<T>
+class Queue<T = any> {
+  private _name: string
+  private _cb: QueueFunction<T>
 
   public constructor(name: string, cb: QueueFunction<T>) {
-    this.name = name
-    this.cb = cb
+    this._name = name
+    this._cb = cb
   }
 
   public async enqueue(payload: T): Promise<void> {
     await RedisPublish.publish({
-      name: this.name,
+      name: this._name,
       payload
     })
   }
-
-  public async process(): Promise<void> {
-    await RedisSubscribe.subscribe(this.name, this.cb)
+  
+  public get name() : string {
+    return this._name
   }
+
+  public get cb() : QueueFunction<T> {
+    return this._cb
+  }
+   
 }
 
 export default Queue

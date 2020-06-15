@@ -1,5 +1,6 @@
 import "./config/env"
 import Queue from "./queue/Queue"
+import combineQueues from "./queue/combineQueues"
 
 type QueuePayload = {
   ok: boolean
@@ -23,12 +24,17 @@ async function main() {
   })
 }
 
-queue
-  .process()
-  .then(() => queue2.process())
+combineQueues([queue, queue2])
   .then(() => main())
   .then()
   .catch(console.error)
+
+// queue
+//   .process()
+//   .then(() => queue2.process())
+//   .then(() => main())
+//   .then()
+//   .catch(console.error)
 
 
 // const redis = require("redis");
