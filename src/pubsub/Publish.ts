@@ -14,7 +14,7 @@ async function publish(data: object, client: RedisClient): Promise<void> {
   })
 }
 
-class RedisPublish {
+export default class RedisPublish {
   private client: RedisClient
 
   public constructor() {
@@ -29,4 +29,3 @@ class RedisPublish {
   }
 }
 
-export default new RedisPublish()

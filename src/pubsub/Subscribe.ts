@@ -21,7 +21,7 @@ async function subscribe(client: RedisClient): Promise<void> {
   })
 }
 
-class RedisSubscribe {
+export default class RedisSubscribe {
   private client: RedisClient
 
   public constructor() {
@@ -42,5 +42,3 @@ class RedisSubscribe {
     await subscribe(this.client)
   }
 }
-
-export default new RedisSubscribe()

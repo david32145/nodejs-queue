@@ -1,31 +1,29 @@
-import RedisPublish from "../pubsub/Publish"
+import getRedisPublish from "../utils/getRedisPublish"
+import getRedisSubscribe from "../utils/getRedisSubscribe"
 
 type QueueFunction<T> = (data: T) => void
 
 class Queue<T = any> {
-  private _name: string
-  private _cb: QueueFunction<T>
+  private name: string
+  private cb: QueueFunction<T>
 
   public constructor(name: string, cb: QueueFunction<T>) {
-    this._name = name
-    this._cb = cb
+    this.name = name
+    this.cb = cb
   }
 
   public async enqueue(payload: T): Promise<void> {
-    await RedisPublish.publish({
-      name: this._name,
+    const client = getRedisPublish()
+    await client.publish({
+      name: this.name,
       payload
     })
   }
-  
-  public get name() : string {
-    return this._name
-  }
 
-  public get cb() : QueueFunction<T> {
-    return this._cb
+  public async process(): Promise<void> {
+    const client = getRedisSubscribe()
+    await client.subscribe(this.name, this.cb)
   }
-   
 }
 
 export default Queue
