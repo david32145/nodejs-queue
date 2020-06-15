@@ -9,6 +9,6 @@ function reportCallback(report: Report) {
   console.log("> New Report: ", report)
 }
 
-const reportQueue = new Queue<Report>("mail", reportCallback)
+const reportQueue = new Queue<Report>("report", reportCallback)
 
 export default reportQueue
