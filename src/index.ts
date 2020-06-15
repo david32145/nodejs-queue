@@ -10,9 +10,7 @@ async function main() {
 }
 
 main()
-  .then(() => {
-    console.log("Main executed")
-  })
+  .then()
   .catch(console.error)
 
 // const redis = require("redis");

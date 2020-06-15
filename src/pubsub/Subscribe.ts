@@ -26,16 +26,17 @@ class RedisSubscribe {
   }
 
   public async subscribe(topic: string, cb: SubscribeFunction): Promise<void> {
-    await subscribe(topic, this.client)
+    this.client.on("subscribe", function(channel) {
+      console.log(`Subcribe on ${channel}`)
+    });
+    
     this.client.on("message", (channel, data) => {
       if(channel === topic) {
         cb(JSON.parse(data))
       }
     })
 
-    this.client.on("subscribe", function(channel, count) {
-      console.log(channel, count)
-    });
+    await subscribe(topic, this.client)
   }
 }
 
