@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev:queue": "tsnd --respawn --no-notify --transpileOnly src/queue.ts"
+    "dev:queue": "tsnd --respawn --no-notify --transpileOnly src/queue.ts",
+    "dev:server": "tsnd --respawn --no-notify --transpileOnly src/server.ts"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
