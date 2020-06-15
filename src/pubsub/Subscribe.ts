@@ -1,11 +1,17 @@
 import redis, { RedisClient } from "redis"
 
+const QUEUE_TOPIC = "@queue/main_topic"
 
-type SubscribeFunction = (data: object) => void
+type SubscribeFunction = (data: any) => void
 
-async function subscribe(topic: string, client: RedisClient): Promise<void> {
+type QueueData = {
+  name: string
+  payload: object
+}
+
+async function subscribe(client: RedisClient): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    client.subscribe(topic, (err) => {
+    client.subscribe(QUEUE_TOPIC, (err) => {
       if(err && err instanceof Error) {
         reject(err)
       } else {
@@ -25,18 +31,15 @@ class RedisSubscribe {
     })
   }
 
-  public async subscribe(topic: string, cb: SubscribeFunction): Promise<void> {
-    this.client.on("subscribe", function(channel) {
-      console.log(`Subcribe on ${channel}`)
-    });
-    
+  public async subscribe(queueName: string, cb: SubscribeFunction): Promise<void> {
     this.client.on("message", (channel, data) => {
-      if(channel === topic) {
-        cb(JSON.parse(data))
+      const obj: QueueData = JSON.parse(data)
+      if(channel === QUEUE_TOPIC && obj.name === queueName) {
+        cb(obj.payload)
       }
     })
 
-    await subscribe(topic, this.client)
+    await subscribe(this.client)
   }
 }
 

@@ -1,17 +1,35 @@
 import "./config/env"
-import RedisPublish from "./pubsub/Publish"
-import RedisSubscribe from "./pubsub/Subscribe"
+import Queue from "./queue/Queue"
 
-async function main() {
-  await RedisSubscribe.subscribe("test", (data) => {
-    console.log(data)
-  })
-  await RedisPublish.publish("test", {ok: true})
+type QueuePayload = {
+  ok: boolean
 }
 
-main()
+const queue = new Queue<QueuePayload>("report", data => {
+  console.log('> report: ', data)
+})
+
+const queue2 = new Queue<QueuePayload>("report2", data => {
+  console.log('> report2: ', data)
+})
+
+async function main() {
+  await queue.enqueue({
+    ok: true,
+  })
+
+  await queue2.enqueue({
+    ok: false
+  })
+}
+
+queue
+  .process()
+  .then(() => queue2.process())
+  .then(() => main())
   .then()
   .catch(console.error)
+
 
 // const redis = require("redis");
 

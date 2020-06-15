@@ -1,9 +1,10 @@
 import redis, { RedisClient } from "redis"
 
+const QUEUE_TOPIC = "@queue/main_topic"
 
-async function publish(topic: string, data: object, client: RedisClient): Promise<void> {
+async function publish(data: object, client: RedisClient): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    client.publish(topic, JSON.stringify(data), (err) => {
+    client.publish(QUEUE_TOPIC, JSON.stringify(data), (err) => {
       if(err && err instanceof Error) {
         reject(err)
       } else {
@@ -23,8 +24,8 @@ class RedisPublish {
     })
   }
 
-  public async publish(topic: string, data: object): Promise<void> {
-    await publish(topic, data, this.client)
+  public async publish(data: object): Promise<void> {
+    await publish(data, this.client)
   }
 }
 

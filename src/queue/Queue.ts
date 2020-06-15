@@ -1,6 +1,5 @@
 import RedisPublish from "../pubsub/Publish"
-
-const QUEUE_TOPIC = "@queue/main_topic"
+import RedisSubscribe from "../pubsub/Subscribe"
 
 type QueueFunction<T> = (data: T) => void
 
@@ -13,10 +12,16 @@ class Queue<T> {
     this.cb = cb
   }
 
-  public async enqueue(data: T): Promise<void> {
-    await RedisPublish.publish(QUEUE_TOPIC, {
+  public async enqueue(payload: T): Promise<void> {
+    await RedisPublish.publish({
       name: this.name,
-      data
+      payload
     })
   }
+
+  public async process(): Promise<void> {
+    await RedisSubscribe.subscribe(this.name, this.cb)
+  }
 }
+
+export default Queue
